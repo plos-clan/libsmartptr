@@ -1,5 +1,7 @@
-#include"stdio.h"
+#include"cstdio"
 #include"libsmartptr.hpp"
+
+using namespace libsmartptr;
 
 template<typename T> void test_destroy_function(smart_ptr<T>* p) {
     printf("destroyed %p\n", p->get());

@@ -1,4 +1,16 @@
-#pragma once
+/*
+	Name: libsmartptr.hpp
+	License: MIT
+	Author: CLimber-Rong
+	Date: 03/08/25 14:03
+	Description: 智能指针库
+*/
+
+
+#ifndef LIBSMARTPTR
+#define LIBSMARTPTR
+
+namespace libsmartptr {
 
 /*移植接口定义*/
 template<class T, typename... Types> T *smart_ptr_new(const Types &...args);
@@ -44,7 +56,7 @@ template<class T> void smart_ptr_delete(const T *ptr) {
 }
 
 /*主体实现部分*/
-template<typename T> void __smart_ptr_default_destroy_function__(smart_ptr<T> *p) {
+template<typename T> void smart_ptr_default_destroy_function(smart_ptr<T> *p) {
 	// 默认的销毁函数，直接delete
 	smart_ptr_delete(p.get());
 }
@@ -53,11 +65,12 @@ template<typename T> smart_ptr<T>::smart_ptr(T *pointer) {
 	ref_cnt = smart_ptr_new<unsigned int>();
 	(*ref_cnt) = 1;
 	ptr = pointer;
-	destroy_fp = __smart_ptr_default_destroy_function__<T>;
+	destroy_fp = smart_ptr_default_destroy_function<T>;
 	// 设置为默认的销毁函数
 }
 
-template<typename T> smart_ptr<T>::smart_ptr(T *pointer, destroy_fp_type destroy_funcptr) {
+template<typename T>
+smart_ptr<T>::smart_ptr(T *pointer, destroy_fp_type destroy_funcptr) {
 	ref_cnt = smart_ptr_new<unsigned int>();
 	(*ref_cnt) = 1;
 	ptr = pointer;
@@ -71,7 +84,8 @@ template<typename T> smart_ptr<T>::smart_ptr(const smart_ptr<T> &value) {
 	(*ref_cnt)++; // 引用计数器自增
 }
 
-template<typename T> smart_ptr<T> &smart_ptr<T>::operator=(const smart_ptr<T> &value) {
+template<typename T>
+smart_ptr<T> &smart_ptr<T>::operator=(const smart_ptr<T> &value) {
 	/*
 	 * 将当前smart_ptr重新指定一个新的指针
 	 * 就意味着需要抛弃当前的指针，指向新的指针
@@ -117,3 +131,7 @@ template<typename T> smart_ptr<T>::~smart_ptr() {
 		// 原理同上
 	}
 }
+
+} // namespace libsmartptr
+
+#endif
